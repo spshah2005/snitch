@@ -2,48 +2,44 @@ import React from 'react';
 import {
   ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
+  Flex,
   theme,
+  VStack
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Logo } from './Logo';
 
-import ClassesDisplay from './components/ClassesDisplay'
-import FriendsDisplay from './components/FriendsDisplay'
-import DeadlineDisplay from './components/DeadlineDisplay'
-import Heading from './components/Heading'
+import ClassesDisplay from './components/ClassesDisplay';
+import FriendsDisplay from './components/FriendsDisplay';
+import DeadlineDisplay from './components/DeadlineDisplay';
+import Heading from './components/Heading';
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      {/* <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
-      </Box> */}
-      <Heading />
-      <ClassesDisplay/>
-      <FriendsDisplay/>
-      <DeadlineDisplay/>
+      {/* Flex container to display components horizontally */}
+      <VStack>
+      <Box flex="1" margin="10px">
+          <Heading />
+        </Box>
+      <Flex
+        justify="space-between"
+        align="center"
+        padding={5}
+        direction={{ base: 'column', md: 'row' }} // Responsive: column on small screens, row on larger screens
+      >
+        {/* Box around each component for spacing */}
+        <Box flex="1" margin="10px">
+          <ClassesDisplay />
+        </Box>
+        <Box flex="1" margin="10px">
+          <FriendsDisplay />
+        </Box>
+        {/* <Box flex="1" margin="10px">
+          <DeadlineDisplay />
+        </Box> */}
+      </Flex>
+      </VStack>
     </ChakraProvider>
   );
 }

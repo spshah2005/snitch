@@ -34,7 +34,7 @@ function ClassesDisplay() {
     const boxWidth = `${maxLength * 8}px`; // Adjust `8px` as the average character width
 
     return (
-        <Box padding="4" transform="scale(0.9)"> {/* Shrink everything by 10% */}
+        <Box padding="4" transform="scale(1.0)"> {/* Shrink everything by 10% */}
             <Text fontSize="2xl" mb={4}>Your Classes:</Text>
             <VStack spacing={4} align="start" width="100%"> {/* Set full width */}
                 {classesArray.map((cls, index) => (
