@@ -40,7 +40,7 @@ function App() {
         </Grid>
       </Box> */}
       <ClassesDisplay/>
-      {/* <FriendsDisplay/> */}
+      <FriendsDisplay/>
       <DeadlineDisplay/>
     </ChakraProvider>
   );
