@@ -30,7 +30,7 @@ function FriendsDisplay() {
                         </Box>
                     ))}
                 </VStack>
-            </Box>
+        </Box>
     );
 }
 export default FriendsDisplay;

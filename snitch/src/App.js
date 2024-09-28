@@ -15,6 +15,7 @@ import { Logo } from './Logo';
 import ClassesDisplay from './components/ClassesDisplay'
 import FriendsDisplay from './components/FriendsDisplay'
 import DeadlineDisplay from './components/DeadlineDisplay'
+import Heading from './components/Heading'
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           </VStack>
         </Grid>
       </Box> */}
+      <Heading />
       <ClassesDisplay/>
       <FriendsDisplay/>
       <DeadlineDisplay/>
