@@ -34,27 +34,25 @@ function ClassesDisplay() {
     const boxWidth = `${maxLength * 8}px`; // Adjust `8px` as the average character width
 
     return (
-        <ChakraProvider theme={theme}>
-            <Box padding="4" transform="scale(0.9)"> {/* Shrink everything by 10% */}
-                <Text fontSize="2xl" mb={4}>Your Classes:</Text>
-                <VStack spacing={4} align="start" width="100%"> {/* Set full width */}
-                    {classesArray.map((cls, index) => (
-                        <Box 
-                            key={index} 
-                            p={4} 
-                            shadow="md" 
-                            borderWidth="1px" 
-                            width={boxWidth}  // Set the width based on longest box
-                            textAlign="left"  // Ensure content is left-aligned
-                        >
-                            <Text fontWeight="bold">{cls.class}</Text>
-                            <Text>Days: {cls.days.join(', ')}</Text>
-                            <Text>Time: {cls.times}</Text>
-                        </Box>
-                    ))}
-                </VStack>
-            </Box>
-        </ChakraProvider>
+        <Box padding="4" transform="scale(0.9)"> {/* Shrink everything by 10% */}
+            <Text fontSize="2xl" mb={4}>Your Classes:</Text>
+            <VStack spacing={4} align="start" width="100%"> {/* Set full width */}
+                {classesArray.map((cls, index) => (
+                    <Box 
+                        key={index} 
+                        p={4} 
+                        shadow="md" 
+                        borderWidth="1px" 
+                        width={boxWidth}  // Set the width based on longest box
+                        textAlign="left"  // Ensure content is left-aligned
+                    >
+                        <Text fontWeight="bold">{cls.class}</Text>
+                        <Text>Days: {cls.days.join(', ')}</Text>
+                        <Text>Time: {cls.times}</Text>
+                    </Box>
+                ))}
+            </VStack>
+        </Box>
     );
 }
 
