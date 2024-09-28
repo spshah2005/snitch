@@ -35,9 +35,9 @@ function App() {
         <Box flex="1" margin="10px">
           <FriendsDisplay />
         </Box>
-        {/* <Box flex="1" margin="10px">
+        <Box flex="1" margin="10px">
           <DeadlineDisplay />
-        </Box> */}
+        </Box>
       </Flex>
       </VStack>
     </ChakraProvider>

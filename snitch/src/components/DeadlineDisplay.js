@@ -33,6 +33,7 @@ function DeadlineDisplay() {
 
   const boxWidth = `${maxLength *9}px`; // Adjust `9px` as the average character width
   const today = new Date();
+  today.setHours(0,0,0,0);
   
   function compareDate(date) {
     if(today <= date){
@@ -46,13 +47,14 @@ function DeadlineDisplay() {
       <Text fontSize="2xl" mb={4}>Deadlines</Text>
       <VStack spacing={4} align="start">
           {deadlinesArray.map((cls, index) => (
-            {compareDate(cls.deadline) ? }
-              <Box key={index} p={4} shadow="md" borderWidth="1px" width={boxWidth} >
+            compareDate(cls.deadline) && (
+              <Box key={index} p={4} shadow="md" borderWidth="1px" width={boxWidth}>
                   <Text fontWeight="bold">{cls.friend}</Text>
                   <Text>Class Name: {cls.className}</Text>
                   <Text>Assignment: {cls.assignment}</Text>
                   <Text>Deadline: {cls.deadline.toLocaleDateString()}</Text>
               </Box>
+            )
           ))}
       </VStack>
 </Box>
