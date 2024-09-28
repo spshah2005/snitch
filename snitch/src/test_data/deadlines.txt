@@ -1,0 +1,5 @@
+eecs-370    hw-1        9/23/2024
+eecs-281    project-1   9/30/2024
+eecs-215    hw-4        9/28/2024
+eecs-485    project-3   9/28/2024
+eecs-388    project-2   9/28/2024
