@@ -1,0 +1,5 @@
+eecs-370    Mon,Tue,Wed    8-9              
+eecs-281    Tue,Thu,Fri    9-10
+eecs-215    Mon,Wed,Fri    10-11
+eecs-485    Tue,Wed,Fri    11-12 
+eecs-388    Wed,Thu,Fri    10-12
