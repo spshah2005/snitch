@@ -37,11 +37,13 @@ function App() {
         <Box flex="1" margin="10px">
           <DeadlineDisplay />
         </Box>
+        
       </Flex>
 
       {/* <Features/> */}
       </VStack>
     </ChakraProvider>
+    
   );
 }
 

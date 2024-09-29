@@ -1,63 +1,192 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ChakraProvider, 
-    Radio,
-    RadioGroup,
-    Stack,
+    IconButton,
     Box,
     Text,
-    VStack
-  } from '@chakra-ui/react';
-  
+    VStack,
+    useToast,
+    Input,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure
+} from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+
 function DeadlineDisplay() {
-    const deadlines = `
-    eecs-370    hw-1        9/23/2024
-    eecs-281    project-1   9/30/2024
-    eecs-215    hw-4        9/28/2024
-    eecs-485    project-3   9/28/2024
-    eecs-388    project-2   9/28/2024
-    `;
+    // const deadlines = `
+    // eecs-370    hw-1        9/23/2024
+    // eecs-281    project-1   9/30/2024
+    // eecs-215    hw-4        9/28/2024
+    // eecs-485    project-3   9/29/2024
+    // eecs-388    project-2   9/29/2024
+    // `;
+    
+    const [deadlines, setDeadlines] = useState([]);
+    // const deadlinesArray = deadlines.trim().split('\n').map(line => {
+    //     const [className, assignment, deadline] = line.trim().split(/\s{2,}/);
+    //     return { className, assignment, deadline: new Date(deadline) };
+    // });
 
-    const deadlinesArray = deadlines.trim().split('\n').map(line => {
-        const [className, assignment, deadline] = line.trim().split(/\s{2,}/);
-        return { className: className, assignment: assignment, deadline: new Date(deadline) };
-    });
+    const maxLength = Math.max(
+        ...deadlines.map(cls => {
+            const combinedText = `Assignment: ${cls.assignment}`;
+            return combinedText.length;
+        })
+    );
 
-     // Find the longest class string to determine the width
-     const maxLength = Math.max(
-      ...deadlinesArray.map(cls => {
-          const combinedText = `$Assignment: ${cls.assignment}`;
-          return combinedText.length;
-      })
-  );
+    const boxWidth = `${maxLength * 9}px`;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const boxWidth = `${maxLength *9}px`; // Adjust `9px` as the average character width
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  
-  function compareDate(date) {
-    if(today <= date){
-      return true;
-    }
-    return false;
-  }
-  
-    return(
-      <Box padding="4">
-      <Text fontSize="2xl" mb={4}>Deadlines</Text>
-      <VStack spacing={4} align="start">
-          {deadlinesArray.map((cls, index) => (
-            compareDate(cls.deadline) && (
-              <Box key={index} p={4} shadow="md" borderWidth="1px" width={boxWidth}>
-                  <Text fontWeight="bold">{cls.friend}</Text>
-                  <Text>Class Name: {cls.className}</Text>
-                  <Text>Assignment: {cls.assignment}</Text>
-                  <Text>Deadline: {cls.deadline.toLocaleDateString()}</Text>
-              </Box>
-            )
-          ))}
-      </VStack>
-</Box>
+    const compareDate = (date) => today <= date;
+
+    const toast = useToast();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    // New state variables for the modal
+    const [className, setClassName] = useState('');
+    const [assignmentName, setAssignmentName] = useState('');
+    const [deadlineDate, setDeadlineDate] = useState('');
+
+    useEffect(() => {
+        async function fetchDeadlines() {
+            try {
+                const response = await fetch('http://localhost:5001/api/data/', {
+                    method: 'GET',
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                // console.log(data.deadlines); // Log the fetched data
+
+            // Convert due_date to Date objects if needed
+            const deadlinesWithDates = data.deadlines.map(deadline => ({
+                ...deadline,
+                due_date: new Date(deadline.due_date) // Ensure due_date is a Date object
+            }));
+            // console.log(deadlinesWithDates);
+            await setDeadlines(deadlinesWithDates);
+            } catch (error) {
+                console.error('Error fetching deadlines:', error);
+                setDeadlines([]); 
+            }
+        }
+    
+        fetchDeadlines();
+    }, []);
+
+    useEffect(() => {
+        console.log('Updated deadlines:', deadlines);
+    }, [deadlines]); 
+    const handleAddClick = () => {
+        onOpen();
+    };
+
+    const handleSubmit = async () => {
+        const newDeadline = {
+            className: className,
+            assignment: assignmentName,
+            due_date: deadlineDate
+        };
+
+        const response = await fetch('http://localhost:5001/api/deadlines/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newDeadline),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to add deadline');
+        }
+
+        toast({
+            title: "Deadline Added",
+            description: "The deadline has been added successfully.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+        });
+
+        setClassName('');
+        setAssignmentName('');
+        setDeadlineDate('');
+        onClose();
+    };
+
+    return (
+        <Box padding="4">
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={4}>
+                <Text fontSize="2xl">Deadlines</Text>
+                <IconButton
+                    aria-label="Add deadline"
+                    icon={<AddIcon />}
+                    onClick={handleAddClick}
+                    colorScheme="teal"
+                    size="sm"
+                />
+            </Box>
+            <VStack spacing={4} align="start">
+                {deadlines.map((cls, index) => {
+                    const deadlineDate = new Date(cls.due_date); // Ensure due_date is a Date object
+                    return compareDate(deadlineDate) && (
+                        <Box key={index} p={4} shadow="md" borderWidth="1px" width={boxWidth}>
+                            <Text fontWeight="bold">{cls.assignment}</Text>
+                            <Text>Class Name: {cls.className}</Text>
+                            <Text>Deadline: {deadlineDate.toLocaleDateString()}</Text>
+                        </Box>
+                    );
+                })}
+            </VStack>
+
+            {/* Modal for adding a deadline */}
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Add a New Deadline</ModalHeader>
+                    <ModalBody>
+                        <Input
+                            placeholder="Class Name"
+                            value={className}
+                            onChange={(e) => setClassName(e.target.value)}
+                            mb={3}
+                        />
+                        <Input
+                            placeholder="Assignment Name"
+                            value={assignmentName}
+                            onChange={(e) => setAssignmentName(e.target.value)}
+                            mb={3}
+                        />
+                        <Input
+                            type="date"
+                            placeholder="Deadline Date"
+                            value={deadlineDate}
+                            onChange={(e) => setDeadlineDate(e.target.value)}
+                            mb={3}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="teal" onClick={handleSubmit}>
+                            Add Deadline
+                        </Button>
+                        <Button onClick={onClose} ml={3}>
+                            Cancel
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </Box>
     );
 }
+
 export default DeadlineDisplay;
