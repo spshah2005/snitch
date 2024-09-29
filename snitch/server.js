@@ -2,8 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const twilio = require('twilio')
 const { MongoClient , ObjectId} = require('mongodb');
-const accountSid = 'AC1b0d92d9ade64470cbc89a26ca700a60';
-const authToken = '117ce9793066119946938d293ebb9ead';
+
 const sms_client = twilio(accountSid, authToken);
 
 

@@ -39,18 +39,18 @@ function App() {
 
         {/* Bottom Row: Friends Display */}
         <Flex width="100%">
-  <Box
-    width="100%" // Make the Box take the full width
-    maxHeight="40vh"
-    overflowY="auto"
-    borderWidth="1px"
-    borderRadius="md"
-    borderColor="gray.200"
-    margin="10px" // Optional: keep margin for spacing, adjust if needed
-  >
-    <FriendsDisplay friends={friends} setFriends={setFriends} />
-  </Box>
-</Flex>
+          <Box
+            width="100%" // Make the Box take the full width
+            maxHeight="40vh"
+            overflowY="auto"
+            borderWidth="1px"
+            borderRadius="md"
+            borderColor="gray.200"
+            margin="10px" 
+          >
+            <FriendsDisplay friends={friends} setFriends={setFriends} />
+          </Box>
+        </Flex>
 
         {/* Calendar Component */}
         <Box margin="10px"   borderWidth="1px" borderRadius="md" borderColor="gray.200">
