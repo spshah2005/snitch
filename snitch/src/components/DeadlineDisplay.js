@@ -19,19 +19,8 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 
 function DeadlineDisplay() {
-    // const deadlines = `
-    // eecs-370    hw-1        9/23/2024
-    // eecs-281    project-1   9/30/2024
-    // eecs-215    hw-4        9/28/2024
-    // eecs-485    project-3   9/29/2024
-    // eecs-388    project-2   9/29/2024
-    // `;
     
     const [deadlines, setDeadlines] = useState([]);
-    // const deadlinesArray = deadlines.trim().split('\n').map(line => {
-    //     const [className, assignment, deadline] = line.trim().split(/\s{2,}/);
-    //     return { className, assignment, deadline: new Date(deadline) };
-    // });
 
     const maxLength = Math.max(
         ...deadlines.map(cls => {
@@ -65,15 +54,14 @@ function DeadlineDisplay() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                // console.log(data.deadlines); // Log the fetched data
 
-            // Convert due_date to Date objects if needed
-            const deadlinesWithDates = data.deadlines.map(deadline => ({
-                ...deadline,
-                due_date: new Date(deadline.due_date) // Ensure due_date is a Date object
-            }));
+            // // Convert due_date to Date objects if needed
+            // const deadlinesWithDates = data.deadlines.map(deadline => ({
+            //     ...deadline,
+            //     due_date: new Date(deadline.deadline) // Ensure due_date is a Date object
+            // }));
             // console.log(deadlinesWithDates);
-            await setDeadlines(deadlinesWithDates);
+            await setDeadlines(data.deadlines);
             } catch (error) {
                 console.error('Error fetching deadlines:', error);
                 setDeadlines([]); 
@@ -83,9 +71,6 @@ function DeadlineDisplay() {
         fetchDeadlines();
     }, []);
 
-    useEffect(() => {
-        console.log('Updated deadlines:', deadlines);
-    }, [deadlines]); 
     const handleAddClick = () => {
         onOpen();
     };
@@ -94,9 +79,9 @@ function DeadlineDisplay() {
         const newDeadline = {
             className: className,
             assignment: assignmentName,
-            due_date: deadlineDate
+            deadline: new Date(deadlineDate), // This is sent to the server
         };
-
+    
         const response = await fetch('http://localhost:5001/api/deadlines/', {
             method: 'POST',
             headers: {
@@ -104,12 +89,18 @@ function DeadlineDisplay() {
             },
             body: JSON.stringify(newDeadline),
         });
-
+    
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to add deadline');
         }
-
+    
+        // Update state with only due_date
+        setDeadlines(prevDeadlines => [
+            ...prevDeadlines,
+            newDeadline
+        ]);
+    
         toast({
             title: "Deadline Added",
             description: "The deadline has been added successfully.",
@@ -117,7 +108,8 @@ function DeadlineDisplay() {
             duration: 3000,
             isClosable: true,
         });
-
+    
+        // Reset modal fields
         setClassName('');
         setAssignmentName('');
         setDeadlineDate('');
@@ -138,12 +130,12 @@ function DeadlineDisplay() {
             </Box>
             <VStack spacing={4} align="start">
                 {deadlines.map((cls, index) => {
-                    const deadlineDate = new Date(cls.due_date); // Ensure due_date is a Date object
+                    const deadlineDate = new Date(cls.deadline); // Ensure due_date is a Date object
                     return compareDate(deadlineDate) && (
                         <Box key={index} p={4} shadow="md" borderWidth="1px" width={boxWidth}>
                             <Text fontWeight="bold">{cls.assignment}</Text>
                             <Text>Class Name: {cls.className}</Text>
-                            <Text>Deadline: {deadlineDate.toLocaleDateString()}</Text>
+                            <Text>Deadline: {deadlineDate.toLocaleDateString('en-US')}</Text>
                         </Box>
                     );
                 })}

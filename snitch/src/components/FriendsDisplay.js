@@ -50,6 +50,10 @@ function FriendsDisplay() {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Failed to add friend');
             }
+            setFriends(prevFriends => [
+                ...prevFriends,
+                newFriend
+            ]);
 
             toast({
                 title: "Friend Added",

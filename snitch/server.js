@@ -106,9 +106,11 @@ app.post('/api/friends/', async (req, res) => {
 });
 
 app.post('/api/deadlines/', async (req, res) => {
-    const {className, assignment, due_date } = req.body; 
+    const {className, assignment, deadline } = req.body; 
+    console.log(deadline);
+    
     // Validate request body
-    if (!className || !assignment || !due_date) {
+    if (!className || !assignment || !deadline) {
         return res.status(400).send({ message: "Missing required fields" });
     }
 
@@ -125,8 +127,8 @@ app.post('/api/deadlines/', async (req, res) => {
         }
 
         // Create the new friend object
-        const dueDateObject = new Date(due_date);
-        const newDeadline = { className, assignment, dueDateObject }; 
+        // const deadline = new Date(due_date);
+        const newDeadline = { className, assignment, deadline }; 
         const result = await col.updateOne(filter, { $push: { deadlines: newDeadline } });
 
         if (result.modifiedCount === 1) {

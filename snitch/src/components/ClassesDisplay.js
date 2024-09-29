@@ -68,6 +68,10 @@ function ClassesDisplay() {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Failed to add class');
             }
+            setClasses(prevClasses => [
+                ...prevClasses,
+                newClass
+            ]);
 
             toast({
                 title: "Class Added",
