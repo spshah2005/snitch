@@ -13,15 +13,14 @@ import ClassesDisplay from './components/ClassesDisplay';
 import FriendsDisplay from './components/FriendsDisplay';
 import DeadlineDisplay from './components/DeadlineDisplay';
 import Heading from './components/Heading';
+// import Features from './components/Features';
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
       {/* Flex container to display components horizontally */}
       <VStack>
-      <Box flex="1" margin="10px">
           <Heading />
-        </Box>
       <Flex
         justify="space-between"
         align="center"
@@ -39,6 +38,8 @@ function App() {
           <DeadlineDisplay />
         </Box>
       </Flex>
+
+      {/* <Features/> */}
       </VStack>
     </ChakraProvider>
   );
