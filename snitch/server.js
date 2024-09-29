@@ -188,24 +188,24 @@ app.delete('/api/deadlines/:id', async (req, res) => {
     }
 });
 
-app.post('/send-sms', (req, res) => {
-    const { body } = req.body;
+// app.post('/send-sms', (req, res) => {
+//     const { body } = req.body;
 
-    sms_client.messages
-        .create({
-            body: body || 'Test message',
-            messagingServiceSid: 'MG35a98a1188d0ae130b0ea80e2050176a', // Your Messaging Service SID
-            to: '+18777804236' // Recipient phone number
-        })
-        .then(message => {
-            console.log(`Message sent with SID: ${message.sid}`);
-            res.status(200).json({ success: true, messageSid: message.sid });
-        })
-        .catch(error => {
-            console.error('Error sending message:', error);
-            res.status(500).json({ success: false, error: error.message });
-        });
-});
+//     sms_client.messages
+//         .create({
+//             body: body || 'Test message',
+//             messagingServiceSid: 'MG35a98a1188d0ae130b0ea80e2050176a', // Your Messaging Service SID
+//             to: '+18777804236' // Recipient phone number
+//         })
+//         .then(message => {
+//             console.log(`Message sent with SID: ${message.sid}`);
+//             res.status(200).json({ success: true, messageSid: message.sid });
+//         })
+//         .catch(error => {
+//             console.error('Error sending message:', error);
+//             res.status(500).json({ success: false, error: error.message });
+//         });
+// });
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
