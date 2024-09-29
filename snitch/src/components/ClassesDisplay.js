@@ -18,9 +18,9 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
-function ClassesDisplay() {
+function ClassesDisplay({classes, setClasses}) {
 
-    const [classes, setClasses] = useState([]);
+    // const [classes, setClasses] = useState([]);
     const [className, setClassName] = useState('');
     const [days, setDays] = useState('');
     const [times, setTimes] = useState('');
@@ -81,7 +81,6 @@ function ClassesDisplay() {
                 isClosable: true,
             });
 
-            // setSchedule(prev => prev + `\n${className}    ${days}    ${times}`);
             setClassName('');
             setDays('');
             setTimes('');

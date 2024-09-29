@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-    ChakraProvider, 
     IconButton,
     Box,
     Text,
@@ -16,22 +15,11 @@ import {
     Button,
     useDisclosure
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, CheckIcon } from '@chakra-ui/icons';
 
-function DeadlineDisplay() {
-    
-    const [deadlines, setDeadlines] = useState([]);
-
-    const maxLength = Math.max(
-        ...deadlines.map(cls => {
-            const combinedText = `Assignment: ${cls.assignment}`;
-            return combinedText.length;
-        })
-    );
-
-    const boxWidth = `${maxLength * 9}px`;
+function DeadlineDisplay({ deadlines, setDeadlines }) {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0); // Set to midnight for accurate date comparison
 
     const compareDate = (date) => today <= date;
 
@@ -46,22 +34,20 @@ function DeadlineDisplay() {
     useEffect(() => {
         async function fetchDeadlines() {
             try {
-                const response = await fetch('http://localhost:5001/api/data/', {
+                const response = await fetch('http://localhost:5001/api/deadlines/', {
                     method: 'GET',
                 });
-    
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-
-            // // Convert due_date to Date objects if needed
-            // const deadlinesWithDates = data.deadlines.map(deadline => ({
-            //     ...deadline,
-            //     due_date: new Date(deadline.deadline) // Ensure due_date is a Date object
-            // }));
-            // console.log(deadlinesWithDates);
-            await setDeadlines(data.deadlines);
+                // await setDeadlines(data.map(deadline => ({
+                //     ...deadline,
+                //     deadline: new Date(deadline.deadline), // Ensure it's a Date object
+                //     _id: deadline._id
+                // })));
+                await setDeadlines(data);
             } catch (error) {
                 console.error('Error fetching deadlines:', error);
                 setDeadlines([]); 
@@ -69,7 +55,7 @@ function DeadlineDisplay() {
         }
     
         fetchDeadlines();
-    }, []);
+    }, [setDeadlines]);
 
     const handleAddClick = () => {
         onOpen();
@@ -79,7 +65,7 @@ function DeadlineDisplay() {
         const newDeadline = {
             className: className,
             assignment: assignmentName,
-            deadline: new Date(deadlineDate), // This is sent to the server
+            deadline: new Date(deadlineDate).toISOString(), // Send as ISO string for consistency
         };
     
         const response = await fetch('http://localhost:5001/api/deadlines/', {
@@ -95,10 +81,10 @@ function DeadlineDisplay() {
             throw new Error(errorData.message || 'Failed to add deadline');
         }
     
-        // Update state with only due_date
+        // Update state with the new deadline
         setDeadlines(prevDeadlines => [
             ...prevDeadlines,
-            newDeadline
+            { ...newDeadline, deadline: new Date(newDeadline.deadline), _id: newDeadline._id } // Convert to Date object
         ]);
     
         toast({
@@ -116,6 +102,28 @@ function DeadlineDisplay() {
         onClose();
     };
 
+    const handleComplete = async (deadline_id) => {
+        // Send a request to your server to update the deadline status
+        const response = await fetch(`http://localhost:5001/api/deadlines/${deadline_id}`, {
+            method: 'DELETE', // Specify the method as DELETE
+        });
+    
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to mark deadline as complete');
+        }
+    
+        // Update state to remove the completed deadline (or mark it as completed)
+        setDeadlines(prevDeadlines => prevDeadlines.filter(d => d._id !== deadline_id));
+        toast({
+            title: "Deadline Completed",
+            description: "The deadline has been marked as completed.",
+            status: "success",
+            duration: 1000,
+            isClosable: true,
+        });
+    };
+    
     return (
         <Box padding="4">
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={4}>
@@ -130,12 +138,23 @@ function DeadlineDisplay() {
             </Box>
             <VStack spacing={4} align="start">
                 {deadlines.map((cls, index) => {
-                    const deadlineDate = new Date(cls.deadline); // Ensure due_date is a Date object
+                    const deadlineDate = new Date(cls.deadline); // Ensure deadline is a Date object
                     return compareDate(deadlineDate) && (
-                        <Box key={index} p={4} shadow="md" borderWidth="1px" width={boxWidth}>
-                            <Text fontWeight="bold">{cls.assignment}</Text>
-                            <Text>Class Name: {cls.className}</Text>
-                            <Text>Deadline: {deadlineDate.toLocaleDateString('en-US')}</Text>
+                        <Box key={index} p={4} shadow="md" borderWidth="1px" width="100%" display="flex" justifyContent="space-between" alignItems="center" >
+                            <Box>
+                                <Text fontWeight="bold">{cls.assignment}</Text>
+                                <Text>Class Name: {cls.className}</Text>
+                                <Text>Deadline: {deadlineDate.toLocaleDateString('en-US')}</Text>
+                            </Box>
+                            <IconButton
+                                aria-label="Complete deadline"
+                                icon={<CheckIcon />}
+                                colorScheme="purple"
+                                onClick={() => handleComplete(cls._id)}
+                                variant="outline"
+                                borderColor="purple.600"
+                                color="purple.600"
+                            />
                         </Box>
                     );
                 })}

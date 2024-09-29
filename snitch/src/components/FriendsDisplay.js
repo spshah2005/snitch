@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text, VStack, IconButton, useToast, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
-function FriendsDisplay() {
-    const [friends, setFriends] = useState([]);
+function FriendsDisplay({friends, setFriends}) {
+    // const [friends, setFriends] = useState([]);
     const [friendName, setFriendName] = useState('');
     const [friendPhone, setFriendPhone] = useState('');
     const toast = useToast();
@@ -50,11 +50,6 @@ function FriendsDisplay() {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Failed to add friend');
             }
-            setFriends(prevFriends => [
-                ...prevFriends,
-                newFriend
-            ]);
-
             toast({
                 title: "Friend Added",
                 description: "The friend has been added successfully.",
@@ -63,7 +58,6 @@ function FriendsDisplay() {
                 isClosable: true,
             });
 
-            // Optionally, refetch friends or add friend locally
             setFriends(prev => [...prev, newFriend]);
             setFriendName('');
             setFriendPhone('');

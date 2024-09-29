@@ -1,49 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ChakraProvider,
   Box,
   Flex,
+  VStack,
   theme,
-  VStack
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
-
 import ClassesDisplay from './components/ClassesDisplay';
 import FriendsDisplay from './components/FriendsDisplay';
 import DeadlineDisplay from './components/DeadlineDisplay';
 import Heading from './components/Heading';
-// import Features from './components/Features';
+import Calendar from './pages/calendar';
 
 function App() {
+  const [classes, setClasses] = useState([]);
+  const [deadlines, setDeadlines] = useState([]);
+  const [friends, setFriends] = useState([]);
+
   return (
     <ChakraProvider theme={theme}>
-      {/* Flex container to display components horizontally */}
-      <VStack>
-          <Heading />
-      <Flex
-        justify="space-between"
-        align="center"
-        padding={5}
-        direction={{ base: 'column', md: 'row' }} // Responsive: column on small screens, row on larger screens
-      >
-        {/* Box around each component for spacing */}
-        <Box flex="1" margin="10px">
-          <ClassesDisplay />
-        </Box>
-        <Box flex="1" margin="10px">
-          <FriendsDisplay />
-        </Box>
-        <Box flex="1" margin="10px">
-          <DeadlineDisplay />
-        </Box>
-        
-      </Flex>
+      <VStack spacing={4} padding={5} align="stretch" height="100vh">
+        <Heading />
 
-      {/* <Features/> */}
+        {/* Top Row: Classes and Deadlines */}
+        <Flex
+          justify="space-between"
+          align="flex-start"
+          direction={{ base: 'column', md: 'row' }} // Responsive: column on small screens, row on larger screens
+          flex="1"
+        >
+          <Box flex="1" margin="10px" maxHeight="40vh" overflowY="auto" borderWidth="1px" borderRadius="md" borderColor="gray.200">
+            <ClassesDisplay classes={classes} setClasses={setClasses} />
+          </Box>
+          <Box flex="1" margin="10px" maxHeight="40vh" overflowY="auto" borderWidth="1px" borderRadius="md" borderColor="gray.200">
+            <DeadlineDisplay deadlines={deadlines} setDeadlines={setDeadlines} />
+          </Box>
+        </Flex>
+
+        {/* Bottom Row: Friends Display */}
+        <Flex width="100%">
+  <Box
+    width="100%" // Make the Box take the full width
+    maxHeight="40vh"
+    overflowY="auto"
+    borderWidth="1px"
+    borderRadius="md"
+    borderColor="gray.200"
+    margin="10px" // Optional: keep margin for spacing, adjust if needed
+  >
+    <FriendsDisplay friends={friends} setFriends={setFriends} />
+  </Box>
+</Flex>
+
+        {/* Calendar Component */}
+        <Box margin="10px"   borderWidth="1px" borderRadius="md" borderColor="gray.200">
+          <Calendar classes={classes} deadlines={deadlines} />
+        </Box>
       </VStack>
     </ChakraProvider>
-    
   );
 }
 
