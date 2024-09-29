@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NavBar from './NavBar';
+
 const typeAnimation = keyframes`
   from { width: 0 }
   to { width: 100% }
@@ -22,17 +23,17 @@ function Heading() {
   const [subheadingIndex, setSubheadingIndex] = useState(0);
 
   const subheadings = [
-    "Your Personal Productivity Watchdog",
-    "Keeping Procrastination at Bay",
-    "Accountability Made Fun and Effective",
-    "Stay on Track, or We'll Spill the Beans!"
+    "Your Productivity Partner",
+    "Beat Procrastination",
+    "Stay Accountable",
+    "Track Your Progress"
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setKey(prevKey => prevKey + 1);
       setSubheadingIndex(prevIndex => (prevIndex + 1) % subheadings.length);
-    }, 10000); // Repeat every 5 seconds
+    }, 8000); // Repeat every 8 seconds
 
     return () => clearInterval(interval);
   }, []);
@@ -98,7 +99,7 @@ function Heading() {
           <Flex direction={{ base: 'column', lg: 'row' }} align="center" justify="space-between" w="full" mt={8}>
             <VStack spacing={8} align="start" flex="1" mr={{ base: 0, lg: 8 }} mb={{ base: 8, lg: 0 }} maxW={{ base: "100%", lg: "45%" }}>
               <Text fontSize="xl" lineHeight="tall" fontFamily="'Roboto', sans-serif" color="purple.700">
-                Snitch is your ultimate accountability partner. We keep you focused and on track by sending friendly nudges to your contacts if you stray from your tasks. Set your goals, connect your accounts, and conquer procrastination with Snitch!
+                Snitch keeps you focused by sending friendly nudges to your contacts if you stray from your tasks. Set goals and conquer procrastination!
               </Text>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button 
@@ -110,24 +111,26 @@ function Heading() {
                   borderRadius="full" 
                   boxShadow="lg"
                 >
-                  Learn More
+                  Get Started
                 </Button>
               </motion.div>
             </VStack>
             
-            <Box flex="1" maxW={{ base: "100%", lg: "45%" }}>
+            <Box flex="1" maxW={{ base: "100%", lg: "450px" }}>
               <motion.div 
                 initial={{ opacity: 0, y: 20 }} 
                 animate={{ opacity: 1, y: 0 }} 
                 transition={{ duration: 0.8 }}
               >
                 <Image 
-                  src='/images/screenshot.png'
+                  src='/images/screenshot.jpeg'
                   alt="Snitch App Screenshot" 
                   borderRadius="lg"
                   boxShadow="2xl"
                   w="full"
                   h="auto"
+                  height='320px'
+                  width='450px'
                 />
               </motion.div>
             </Box>

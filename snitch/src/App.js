@@ -11,6 +11,7 @@ import FriendsDisplay from './components/FriendsDisplay';
 import DeadlineDisplay from './components/DeadlineDisplay';
 import Heading from './components/Heading';
 import Calendar from './pages/calendar';
+import FeaturePage from './components/FeaturePage'
 
 function App() {
   const [classes, setClasses] = useState([]);
@@ -56,6 +57,12 @@ function App() {
         <Box margin="10px"   borderWidth="1px" borderRadius="md" borderColor="gray.200">
           <Calendar classes={classes} deadlines={deadlines} />
         </Box>
+
+
+
+        <FeaturePage />
+
+        
       </VStack>
     </ChakraProvider>
   );
