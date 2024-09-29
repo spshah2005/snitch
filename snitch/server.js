@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const twilio = require('twilio')
+// const twilio = require('twilio')
 const { MongoClient , ObjectId} = require('mongodb');
 
-const sms_client = twilio(accountSid, authToken);
+// const sms_client = twilio(accountSid, authToken);
 
 
 const app = express();
