@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Text,
@@ -9,8 +9,11 @@ import {
   Container,
   keyframes,
   Heading as ChakraHeading,
+  Input,
+  useToast,
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import NavBar from './NavBar';
 
 const typeAnimation = keyframes`
@@ -21,6 +24,10 @@ const typeAnimation = keyframes`
 function Heading() {
   const [key, setKey] = useState(0);
   const [subheadingIndex, setSubheadingIndex] = useState(0);
+  const [userInput, setUserInput] = useState('');
+  const [aiSuggestion, setAiSuggestion] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
 
   const subheadings = [
     "Your Productivity Partner",
@@ -33,10 +40,64 @@ function Heading() {
     const interval = setInterval(() => {
       setKey(prevKey => prevKey + 1);
       setSubheadingIndex(prevIndex => (prevIndex + 1) % subheadings.length);
-    }, 8000); // Repeat every 8 seconds
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
+
+  const getAiSuggestion = async (input) => {
+    const API_KEY = 'AIzaSyCtIw2a4NtB481czJp1pScV2betri65JeM'; // Use environment variable for security
+    const genAI = new GoogleGenerativeAI(API_KEY);
+
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+      const prompt = `Provide a short, concise productivity tip for this task: ${input}. Format the response as a brief title followed by a single, clear sentence of advice. Keep the entire response under 150 characters.`;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let text = response.text();
+
+      // Basic formatting
+      text = text.replace(/\*\*/g, ''); // Remove asterisks
+      text = text.replace(/(\w+:)/g, '\n$1'); // Add newline before labels
+      text = text.trim(); // Remove extra whitespace
+
+      return text;
+    } catch (error) {
+      console.error('Error fetching AI suggestion:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!userInput.trim()) {
+      toast({
+        title: "Please enter a task",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const suggestion = await getAiSuggestion(userInput);
+      setAiSuggestion(suggestion);
+    } catch (error) {
+      toast({
+        title: "Error getting suggestion",
+        description: "An unexpected error occurred. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box minHeight="100vh" width="100vw" overflow="hidden" bg="purple.50">
@@ -114,9 +175,41 @@ function Heading() {
                   Get Started
                 </Button>
               </motion.div>
+
+              {/* AI Task Suggestion Feature */}
+              <Box width="100%" mt={8}>
+                <form onSubmit={handleSubmit}>
+                  <VStack spacing={4}>
+                    <Input
+                      placeholder="Enter a task you're struggling with"
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      size="lg"
+                      borderColor="purple.300"
+                    />
+                    <Button
+                      type="submit"
+                      colorScheme="purple"
+                      size="lg"
+                      width="100%"
+                      isLoading={isLoading}
+                    >
+                      Get AI Suggestion
+                    </Button>
+                  </VStack>
+                </form>
+                {aiSuggestion && (
+                  <Box mt={4} p={4} bg="purple.100" borderRadius="md">
+                    <Text fontWeight="bold" mb={2}>AI Suggestion:</Text>
+                    <Text whiteSpace="pre-wrap" fontSize="md">
+                      {aiSuggestion}
+                    </Text>
+                  </Box>
+                )}
+              </Box>
             </VStack>
             
-            <Box flex="1" maxW={{ base: "100%", lg: "450px" }}>
+            <Box flex={1} maxW={{ base: "100%", lg: "450px" }}>
               <motion.div 
                 initial={{ opacity: 0, y: 20 }} 
                 animate={{ opacity: 1, y: 0 }} 
@@ -129,8 +222,6 @@ function Heading() {
                   boxShadow="2xl"
                   w="full"
                   h="auto"
-                  height='320px'
-                  width='450px'
                 />
               </motion.div>
             </Box>
